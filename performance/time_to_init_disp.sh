@@ -20,10 +20,20 @@ This gets the time to initial display for an app for a few times.
 e.g.
 PKG_NAME="com.android.car.dialer" \
     ACT_NAME=".ui.TelecomActivity" \
-    LOOPS=10 \
+    LOOPS=3 \
+    SLEEP_SEC=3 \
     ./time_to_init_disp.sh
+
+Notes:
+  - This will not work on User builds.
 '
     exit
+}
+
+stop_pkg() {
+    echo "Force-stop $PKG_NAME"
+    adb shell am force-stop "$PKG_NAME"
+    sleep $SLEEP_SEC
 }
 
 if [[ -z $PKG_NAME ]]; then
@@ -36,25 +46,31 @@ fi
 ACTIVITY="$PKG_NAME/$ACT_NAME"
 
 if [[ -z $LOOPS ]]; then
-    LOOPS=10
+    LOOPS=3
 fi
+
+if [[ -z $SLEEP_SEC ]]; then
+    SLEEP_SEC=3
+fi
+
 echo "Time $ACTIVITY to Initial Display for $LOOPS times."
+adb shell getprop ro.build.fingerprint
+stop_pkg
+
 START=1
 
-SLEEP_SEC=3
 adb root
 adb logcat -c
 for (( l=$START; l<=$LOOPS; l++ )); do
-    echo "Force-stop $PKG_NAME"
-    adb shell am force-stop "$PKG_NAME"
-    sleep $SLEEP_SEC
-
     echo "Dropping caches"
     adb shell "echo 3 > /proc/sys/vm/drop_caches"
 
     echo "Loop: $l"
-    adb shell am start -n "$ACTIVITY"
+    # -S: Force stop the target app before starting the activity.
+    # -W: Wait for launch to complete.
+    adb shell am start -S -W -n "$ACTIVITY"
     sleep $SLEEP_SEC
+    stop_pkg
 done
 
 echo
