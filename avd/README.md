@@ -9,3 +9,5 @@ These scripts provide simple steps to add AVD images. So users can use them by t
     * test_avd_avd_image.sh is an test & also an example how to use it.
 * batch_add_avd_img.sh adds all AVD images listed in the input CSV file & properly patch to be used for Automotive device profiles.
     * avd_img_list.csv is the default CSV file if non is provided & also as an example.
+* patch_avd.sh changes an AVD configuration for more RAM & heap. So it can perform properly.
+* patch_all_avds.sh changes all AVD configuration for more RAM & heap. So it can perform properly.
