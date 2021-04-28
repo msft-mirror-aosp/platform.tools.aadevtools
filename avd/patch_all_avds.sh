@@ -16,10 +16,10 @@
 
 readme() {
   echo '''
-Change all AVD configuration for more RAM & heap. So it can perform properly.
+Change all AVD configuration for bigger RAM, heap & data-disk sizes. So it can perform better.
 If TAG_ID of AVD is empty, it will change all AVDs. e.g.
 
-RAM=4096 HEAP=576 AVD_ROOT_DIR="$HOME/.android/avd" TAG_ID="android-automotive" ./patch_all_avds.sh
+RAM=4096 HEAP=576 DATA_DISK=6000 AVD_ROOT_DIR="$HOME/.android/avd" TAG_ID="android-automotive" ./patch_all_avds.sh
 '''
 }
 
@@ -40,9 +40,9 @@ SCRIPT_NAME=${MY_NAME##*/}
 SCRIPT_DIR=${MY_NAME%/$SCRIPT_NAME}
 echo Running from $SCRIPT_DIR
 
-# Export VAR with the value of the key in a file as: getValue "VAR" "KEY" "FILE"
+# Export VAR with the value of the key in a file as:
+# getValue "VAR" "KEY" "config.ini FILE"
 # e.g. getValue "MY_AVD_ID" "AvdId" "$avd_dir/config.ini"
-# For: AvdId=Automotive_10_landscape_API_30
 getValue() {
     VAR=$1
     KEY=$2
@@ -68,6 +68,11 @@ if [[ -z $HEAP ]]; then
 fi
 echo "HEAP=$HEAP"
 
+if [[ -z $DATA_DISK ]]; then
+    DATA_DISK=6000
+fi
+echo "DATA_DISK=$DATA_DISK"
+
 for file in $(ls "$AVD_ROOT_DIR"); do
   avd_dir="$AVD_ROOT_DIR/$file"
   if [[ $file == *.avd ]]; then
@@ -78,10 +83,11 @@ for file in $(ls "$AVD_ROOT_DIR"); do
       getValue "MY_TAG_ID" "tag.id" $config_file
       if [[ $TAG_ID != $MY_TAG_ID ]]; then
         echo "SKIP: $MY_AVD_ID is $MY_TAG_ID rather $TAG_ID "
+        echo
         continue
       fi
     fi
-    RAM=$RAM HEAP=$HEAP AVD_DIR=$avd_dir $SCRIPT_DIR/patch_avd.sh
+    RAM=$RAM HEAP=$HEAP DATA_DISK=$DATA_DISK AVD_DIR=$avd_dir $SCRIPT_DIR/patch_avd.sh
     echo
   fi
 done
