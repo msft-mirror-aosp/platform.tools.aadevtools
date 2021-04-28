@@ -6,8 +6,11 @@ These scripts provide simple steps to add AVD images. So users can use them by t
 
 ### Add new AVD images
 * add_avd_img.sh adds an AVD image to Android SDK dir.
-    * test_avd_avd_image.sh is an test & also an example how to use it.
+    * test_avd_avd_image.sh is the test & also examples of how to use it.
 * batch_add_avd_img.sh adds all AVD images listed in the input CSV file & properly patch to be used for Automotive device profiles.
     * avd_img_list.csv is the default CSV file if non is provided & also as an example.
-* patch_avd.sh changes an AVD configuration for more RAM & heap. So it can perform properly.
+* patch_avd.sh changes an AVD configuration for bigger RAM, heap & data disk. So it can perform properly.
 * patch_all_avds.sh changes all AVD configuration for more RAM & heap. So it can perform properly.
+    * test_patch_all_avds.sh is the test & also examples of how to use it.
+* set_avds_force_cold_boot.sh sets Cold Boot or Quick Boot for all AVD configurations.
+    * test_set_avds_force_cold_boot.sh is the test & also examples of how to use it.
