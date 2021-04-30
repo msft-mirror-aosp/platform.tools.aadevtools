@@ -16,8 +16,9 @@
 
 readme() {
   echo '''
-Change an AVD configuration for more RAM & heap. So it can perform properly. e.g.
-RAM=4096 HEAP=576 AVD_DIR="$HOME/.android/avd/Automotive_10_landscape_API_30.avd" ./patch_avd.sh
+Change an AVD configuration for bigger RAM, heap & data-disk sizes. So it can perform better. e.g.
+RAM=4096 HEAP=576 DATA_DISK=6000 AVD_DIR="$HOME/.android/avd/Automotive_10_landscape_API_30.avd" ./patch_avd.sh
+
 '''
 }
 
@@ -53,6 +54,11 @@ if [[ -z $HEAP ]]; then
 fi
 echo "HEAP=$HEAP"
 
+if [[ -z $DATA_DISK ]]; then
+    DATA_DISK=6000
+fi
+echo "DATA_DISK=$DATA_DISK"
+
 AVD_CONFIG="$AVD_DIR/config.ini"
 if [[ ! -e $AVD_CONFIG ]]; then
   echo "ERROR: no AVD config file at: $AVD_CONFIG"
@@ -60,10 +66,13 @@ if [[ ! -e $AVD_CONFIG ]]; then
 fi
 echo "AVD_CONFIG=$AVD_CONFIG"
 
-echo "CHANGE: hw.ramSize=$RAM & vm.heapSize=$HEAP in $AVD_CONFIG"
+echo "CHANGE: hw.ramSize=$RAM, vm.heapSize=$HEAP & disk.dataPartition.size=${DATA_DISK}M in $AVD_CONFIG"
 $SED_I_CMD '/^hw.ramSize/d' $AVD_CONFIG
 $SED_I_CMD '/^vm.heapSize/d' $AVD_CONFIG
+$SED_I_CMD '/^disk.dataPartition.size/d' $AVD_CONFIG
 echo "hw.ramSize=$RAM" >> $AVD_CONFIG
 echo "vm.heapSize=$HEAP" >> $AVD_CONFIG
+echo "disk.dataPartition.size=${DATA_DISK}M" >> $AVD_CONFIG
 cat $AVD_CONFIG | grep "hw.ramSize"
 cat $AVD_CONFIG | grep "vm.heapSize"
+cat $AVD_CONFIG | grep "disk.dataPartition.size"
